@@ -1,0 +1,45 @@
+bundle:
+  name: xe-training-capstone
+
+variables:
+  catalog:
+    default: xe_training_catalog
+  schema:
+    default: capstone
+
+resources:
+  jobs:
+    capstone_pipeline:
+      name: xe-training-capstone-pipeline
+      tasks:
+        - task_key: bronze_ingest
+          notebook_task:
+            notebook_path: ./notebooks/bronze_ingest
+        - task_key: silver_dqx
+          depends_on:
+            - task_key: bronze_ingest
+          notebook_task:
+            notebook_path: ./notebooks/silver_dqx
+        - task_key: gold_agg
+          depends_on:
+            - task_key: silver_dqx
+          notebook_task:
+            notebook_path: ./notebooks/gold_agg
+        - task_key: train_model
+          depends_on:
+            - task_key: gold_agg
+          notebook_task:
+            notebook_path: ./notebooks/train_model
+
+targets:
+  dev:
+    default: true
+    workspace:
+      host: https://adb-1445520961226240.0.azuredatabricks.net
+      root_path: ~/.bundle/${bundle.name}/${bundle.target}
+  prod:
+    workspace:
+      host: https://adb-1445520961226240.0.azuredatabricks.net
+      root_path: /Shared/.bundle/${bundle.name}/${bundle.target}
+    run_as:
+      user_name: rishabhmalik15@outlook.com
