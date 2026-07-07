@@ -14,22 +14,22 @@ resources:
       tasks:
         - task_key: bronze_ingest
           notebook_task:
-            notebook_path: ./notebooks/bronze_ingest
+            notebook_path: ./notebooks/bronze_ingest.py
         - task_key: silver_dqx
           depends_on:
             - task_key: bronze_ingest
           notebook_task:
-            notebook_path: ./notebooks/silver_dqx
+            notebook_path: ./notebooks/silver_dqx.py
         - task_key: gold_agg
           depends_on:
             - task_key: silver_dqx
           notebook_task:
-            notebook_path: ./notebooks/gold_agg
+            notebook_path: ./notebooks/gold_agg.py
         - task_key: train_model
           depends_on:
             - task_key: gold_agg
           notebook_task:
-            notebook_path: ./notebooks/train_model
+            notebook_path: ./notebooks/train_model.py
 
 targets:
   dev:
